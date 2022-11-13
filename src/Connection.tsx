@@ -1,14 +1,11 @@
 import { useState } from 'react';
 import { invoke } from '@tauri-apps/api';
+import { Response } from './App';
 
 type Props = {
   setTables: React.Dispatch<React.SetStateAction<string[]>>;
 };
 
-type Response = {
-  status: number;
-  message: string;
-};
 export default function Connection({ setTables }: Props) {
   const [url, setUrl] = useState('');
   const [error, setError] = useState('');

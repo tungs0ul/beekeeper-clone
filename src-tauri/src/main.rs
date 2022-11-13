@@ -73,7 +73,11 @@ async fn execute(query: String, pool: &Pool<Postgres>) -> Result<Response, ()> {
                     let value = row.try_get_raw(col.ordinal()).unwrap();
                     let value = match value.is_null() {
                         true => "NULL".to_string(),
-                        false => value.as_str().unwrap().to_string(),
+                        false => {
+                            let x = value.as_bytes().unwrap();
+                            let y = String::from_utf8_lossy(x).to_string();
+                            y
+                        }
                     };
                     r.insert(col.name().to_string(), value);
                 }

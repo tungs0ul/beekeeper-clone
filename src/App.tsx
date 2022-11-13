@@ -3,6 +3,11 @@ import Connection from './Connection';
 import Sidebar from './Sidebar';
 import Query from './Query';
 
+export type Response = {
+  status: number;
+  message: string;
+};
+
 function App() {
   const [isConnected, setIsConnected] = useState(false);
   const [tables, setTables] = useState<string[]>([]);
