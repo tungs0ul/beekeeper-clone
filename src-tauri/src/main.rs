@@ -66,18 +66,14 @@ async fn execute(query: String, pool: &Pool<Postgres>) -> Result<Response, ()> {
 
     match rows {
         Ok(rows) => {
-            let mut result: Vec<HashMap<String, String>> = vec![];
+            let mut result: Vec<HashMap<String, Vec<u8>>> = vec![];
             for row in rows {
-                let mut r: HashMap<String, String> = HashMap::new();
+                let mut r: HashMap<String, Vec<u8>> = HashMap::new();
                 for col in row.columns() {
                     let value = row.try_get_raw(col.ordinal()).unwrap();
                     let value = match value.is_null() {
-                        true => "NULL".to_string(),
-                        false => {
-                            let x = value.as_bytes().unwrap();
-                            let y = String::from_utf8_lossy(x).to_string();
-                            y
-                        }
+                        true => vec![],
+                        false => value.as_bytes().unwrap().to_owned(),
                     };
                     r.insert(col.name().to_string(), value);
                 }

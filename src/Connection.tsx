@@ -11,14 +11,15 @@ export default function Connection({ setTables }: Props) {
   const [error, setError] = useState('');
 
   const connect = () => {
-    invoke('connect', { url }).then((rsp) => {
-      if ((rsp as Response).status === 500) {
-        setError((rsp as Response).message);
+    invoke('connect', { url }).then((rsp: any) => {
+      if (rsp.status === 500) {
+        setError(`${(rsp as Response).message}`);
       } else {
-        let tables: { tablename: string }[] = JSON.parse(
-          (rsp as Response).message
+        let json: { tablename: number[] }[] = JSON.parse(rsp.message);
+        let tables = json.map((e) =>
+          e.tablename.map((elm) => String.fromCharCode(elm)).join('')
         );
-        setTables(tables.map((table) => table.tablename));
+        setTables(tables);
       }
     });
   };

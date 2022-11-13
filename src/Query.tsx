@@ -2,8 +2,13 @@ import { useState, useEffect } from 'react';
 import CodeMirror from '@uiw/react-codemirror';
 import { invoke } from '@tauri-apps/api';
 import { Response } from './App';
+import { t } from '@tauri-apps/api/event-2a9960e7';
 
 type Props = {};
+
+type Row = {
+  [key: string]: any;
+};
 
 export default function Query({}: Props) {
   const [query, setQuery] = useState('');
@@ -21,15 +26,13 @@ export default function Query({}: Props) {
 
   const execute = () => {
     invoke('sql', { query }).then((rsp) => {
-      let data: { [key: string]: any }[] = JSON.parse(
-        (rsp as Response).message
-      );
-      setResult(
-        data.map((row) => {
-          let result = JSON.stringify(Object.values(row));
-          return result;
-        })
-      );
+      let msg = (rsp as Response).message;
+      let data: { [key: string]: number[] }[] = JSON.parse(msg);
+      let x = Object.entries(data[0]).map((e) => ({
+        key: e[0],
+        value: e[1].map((elm) => String.fromCharCode(elm)).join(''),
+      }));
+      setResult([JSON.stringify(x)]);
     });
   };
 
